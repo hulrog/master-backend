@@ -1,0 +1,38 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('expertise_ratings', function (Blueprint $table) {
+            $table->bigIncrements('expertise_rating_id');
+            $table->unsignedBigInteger('expertise_id');
+            $table->unsignedBigInteger('user_id');
+            $table->integer('rating');
+            $table->date('date_rated');
+            $table->timestamps();
+
+            $table->foreign('expertise_id')->references('expertise_id')->on('expertises');
+            $table->foreign('user_id')->references('user_id')->on('users');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('expertise_ratings', function (Blueprint $table) {
+            $table->dropForeign(['expertise_id']);
+            $table->dropForeign(['user_id']);
+        });
+        Schema::dropIfExists('expertise_ratings');
+    }
+};

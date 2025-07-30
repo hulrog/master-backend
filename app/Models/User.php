@@ -12,36 +12,40 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    public function country() {
+        return $this->belongsTo(Country::class);
+    }
+    public function expertiseRatings() {
+        return $this->hasMany(ExpertiseRating::class);
+    }
+    public function expertise() {
+        return $this->hasMany(Expertise::class);
+    }
+    public function facts() {
+        return $this->hasMany(Fact::class);
+    }
+
+    protected $primaryKey = 'user_id';
+
     protected $fillable = [
         'name',
-        'email',
         'password',
+        'date_of_birth',
+        'date_joined',
+        'name',
+        'email',
+        'gender',
+        'country_id'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
