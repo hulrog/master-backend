@@ -30,4 +30,6 @@ class Fact extends Model
         'date_entered',
         'source',
     ];
+
+    public $timestamps = false; 
 }

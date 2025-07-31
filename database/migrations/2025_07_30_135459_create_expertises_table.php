@@ -15,7 +15,7 @@ return new class extends Migration
             $table->bigIncrements('expertise_id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('area_id');
-            $table->timestamps();
+            // $table->timestamps();
 
             $table->foreign('user_id')->references('user_id')->on('users');
             $table->foreign('area_id')->references('area_id')->on('areas');

@@ -19,4 +19,6 @@ class Topic extends Model
         'name',
         'area_id',
     ];
+
+    public $timestamps = false; 
 }

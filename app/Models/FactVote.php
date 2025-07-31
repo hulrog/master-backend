@@ -24,5 +24,7 @@ class FactVote extends Model
         'user_id',
         'rating',
     ];
+
+    public $timestamps = false; 
 }
 

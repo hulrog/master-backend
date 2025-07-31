@@ -15,7 +15,7 @@ return new class extends Migration
             $table->bigIncrements('topic_id');
             $table->string('name')->unique();
             $table->unsignedBigInteger('area_id');
-            $table->timestamps();
+            // $table->timestamps();
 
             $table->foreign('area_id')->references('area_id')->on('areas');
         });

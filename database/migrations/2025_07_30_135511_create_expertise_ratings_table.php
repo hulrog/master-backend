@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->integer('rating');
             $table->date('date_rated');
-            $table->timestamps();
+            // $table->timestamps();
 
             $table->foreign('expertise_id')->references('expertise_id')->on('expertises');
             $table->foreign('user_id')->references('user_id')->on('users');

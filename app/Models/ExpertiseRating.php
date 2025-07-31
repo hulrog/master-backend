@@ -25,4 +25,6 @@ class ExpertiseRating extends Model
         'rating',
         'date_rated'
     ];
+
+    public $timestamps = false; 
 }

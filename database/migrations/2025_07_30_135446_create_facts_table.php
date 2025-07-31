@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('text');
             $table->date('date_entered');
             $table->string('source')->nullable();
-            $table->timestamps();
+            // $table->timestamps();
 
             $table->foreign('topic_id')->references('topic_id')->on('topics');
             $table->foreign('user_id')->references('user_id')->on('users');

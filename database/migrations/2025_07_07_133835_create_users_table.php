@@ -20,10 +20,10 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('gender');
             //$table->rememberToken();
-            $table->timestamps();
+            // $table->timestamps();
 
-            // $table->unsignedBigInteger('country_id')->nullable();
-            // $table->foreign('country_id')->references('country_id')->on('countries');
+            $table->unsignedBigInteger('country_id')->nullable();
+            $table->foreign('country_id')->references('country_id')->on('countries');
         });
 
 

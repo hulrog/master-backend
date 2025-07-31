@@ -23,4 +23,6 @@ class Expertise extends Model
         'user_id',
         'area_id',
     ];
+
+    public $timestamps = false; 
 }

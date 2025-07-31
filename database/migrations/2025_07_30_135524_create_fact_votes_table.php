@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('fact_id');
             $table->unsignedBigInteger('user_id');
             $table->boolean('rating'); 
-            $table->timestamps();
+            // $table->timestamps();
 
             $table->foreign('fact_id')->references('fact_id')->on('facts');
             $table->foreign('user_id')->references('user_id')->on('users');

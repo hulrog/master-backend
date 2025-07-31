@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('areas', function (Blueprint $table) {
             $table->bigIncrements('area_id');
             $table->string('name')->unique();
-            $table->timestamps();
+            // $table->timestamps();
         });
     }
 
