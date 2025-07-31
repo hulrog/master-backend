@@ -10,7 +10,9 @@ class Country extends Model
     /** @use HasFactory<\Database\Factories\CountryFactory> */
     use HasFactory;
 
-    public function users() {return $this->hasMany(User::class);}
+    public function users() {
+        return $this->hasMany(User::class, 'country_id');
+    }
 
     protected $primaryKey = 'country_id';
 

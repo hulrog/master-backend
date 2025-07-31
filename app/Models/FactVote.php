@@ -11,10 +11,10 @@ class FactVote extends Model
     use HasFactory;
 
     public function user() {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
     public function fact() {
-        return $this->belongsTo(Fact::class);
+        return $this->belongsTo(Fact::class, 'fact_id');
     }
 
     protected $primaryKey = 'fact_vote_id';

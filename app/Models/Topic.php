@@ -10,8 +10,12 @@ class Topic extends Model
     /** @use HasFactory<\Database\Factories\TopicFactory> */
     use HasFactory;
 
-    public function facts() {return $this->hasMany(Fact::class);}  
-    public function area() {return $this->belongsTo(Area::class);} 
+    public function facts() {
+        return $this->hasMany(Fact::class, 'topic_id');
+    }  
+    public function area() {
+        return $this->belongsTo(Area::class, 'area_id');
+    } 
 
     protected $primaryKey = 'topic_id';
 

@@ -13,16 +13,16 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     public function country() {
-        return $this->belongsTo(Country::class);
+        return $this->belongsTo(Country::class, 'country_id');
     }
     public function expertiseRatings() {
-        return $this->hasMany(ExpertiseRating::class);
+        return $this->hasMany(ExpertiseRating::class, 'user_id');
     }
     public function expertise() {
-        return $this->hasMany(Expertise::class);
+        return $this->hasMany(Expertise::class, 'user_id');
     }
     public function facts() {
-        return $this->hasMany(Fact::class);
+        return $this->hasMany(Fact::class, 'user_id');
     }
 
     protected $primaryKey = 'user_id';

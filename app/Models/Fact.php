@@ -12,13 +12,13 @@ class Fact extends Model
 
 
     public function topic() {
-        return $this->belongsTo(Topic::class);
+        return $this->belongsTo(Topic::class, 'topic_id');
     }
     public function user() {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
     public function factVotes() {
-        return $this->hasMany(FactVote::class);
+        return $this->hasMany(FactVote::class, 'fact_id');
     }
 
     protected $primaryKey = 'fact_id';

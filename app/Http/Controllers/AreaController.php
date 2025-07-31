@@ -26,5 +26,14 @@ class AreaController extends Controller
         return response()->json(['message' => 'Area created successfully', 'area' => $area], 201);
     }
 
+    public function getAllAreasContainingLetters($letters)
+    {
+        $areas = Area::where('name', 'like', "%$letters%")
+            ->get();
+        if ($areas->isEmpty()) {
+            return response()->json(['message' => 'No areas found containing the given letters'], 404);
+        }
+        return response()->json(['message' => 'Areas retrieved successfully', 'areas' => $areas], 200);
+    }
 
 }

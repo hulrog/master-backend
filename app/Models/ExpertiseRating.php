@@ -11,10 +11,10 @@ class ExpertiseRating extends Model
     use HasFactory;
 
     public function expertise() {
-        return $this->belongsTo(Expertise::class);
+        return $this->belongsTo(Expertise::class, 'expertise_id');
     }
     public function user() {
-        return $this->belongsTo(User::class);  
+        return $this->belongsTo(User::class, 'user_id');  
     }
 
     protected $primaryKey = 'expertise_rating_id';
