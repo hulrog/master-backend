@@ -19,7 +19,9 @@ class AiController extends Controller
         $userPrompt = "Arrange the information within the following facts into a coherent instructive paragraph. 
             Do not keep the sentence structure the same. 
             Don't infer any non-obvious information that is not provided within the facts, 
-            but make the text stylistically pleasant. :\n\n";
+            but make the text stylistically pleasant. 
+            Provide the paragraph in the same language the facts are in.
+            Here's the facts: \n\n";
         foreach ($facts as $index => $fact) {
             $userPrompt .= ($index + 1) . ". " . trim($fact) . "\n";
         }
