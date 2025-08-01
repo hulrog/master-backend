@@ -24,9 +24,7 @@ Route::get('/getAllCountries', [CountryController::class, 'getAllCountries']);
 //AI routes
 Route::post('/testAi', [AiController::class, 'testAi']);
 
-Route::middleware('auth:sanctum')->group(function () {
-
-
+// Route::middleware('auth:sanctum')->group(function () {
     // User routes
     Route::get('/getAllUsers', [UserController::class, 'getAllUsers']);
     Route::post('/createUser', [UserController::class, 'createUser']);
@@ -48,6 +46,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/getAllFacts', [FactController::class, 'getAllFacts']);
     Route::post('/createFact', [FactController::class, 'createFact']);
     Route::get('/getAllFactsOfUser/{userId}', [FactController::class, 'getAllFactsOfUser']);
+    Route::get('/getAllFactsOfTopic/{topicId}', [FactController::class, 'getAllFactsOfTopic']);
+    Route::post('/getAllFactsThatMeetRequirements', [FactController::class, 'getAllFactsThatMeetRequirementsv2']);
 
     // FactVote routes
     Route::get('/getAllFactVotesOfFact/{factId}', [FactVoteController::class, 'getAllFactVotesOfFact']);
@@ -63,7 +63,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/createExpertiseRating', [ExpertiseRatingController::class, 'createExpertiseRating']);
     Route::get('/getAllExpertiseRatingsOfExpertise/{expertiseId}', [ExpertiseRatingController::class, 'getAllExpertiseRatingsOfExpertise']);
     Route::get('/getAllExpertisesOfUser/{userId}', [ExpertiseController::class, 'getAllExpertisesOfUser']);
-});
+// });
 
 
 

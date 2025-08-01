@@ -21,7 +21,7 @@ class FactVoteController extends Controller
         $validatedData = $request->validate([
             'fact_id' => 'required|integer',
             'user_id' => 'required|integer',
-            'vote' => 'required|integer',
+            'rating' => 'required|boolean',
         ]);
         $factVote = FactVote::create($validatedData);
         return response()->json(['message' => 'Fact vote created successfully', 'fact_vote' => $factVote], 201);
