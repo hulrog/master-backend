@@ -11,6 +11,7 @@ use App\Http\Controllers\FactController;
 use App\Http\Controllers\FactVoteController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AiController;
 
 //Authentication routes
 Route::post('/register', [AuthController::class, 'register']);
@@ -19,6 +20,9 @@ Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logo
 
 // Country routes
 Route::get('/getAllCountries', [CountryController::class, 'getAllCountries']);
+
+//AI routes
+Route::post('/testAi', [AiController::class, 'testAi']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
