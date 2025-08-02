@@ -83,8 +83,6 @@ class FactController extends Controller
                         }
                     });
                 })
-                // ->with('factVotes.user')
-                // ->get();
                 -> pluck('text');
 
         if ($facts->isEmpty()) {
@@ -104,45 +102,46 @@ class FactController extends Controller
             return response()->json(['error' => 'topicId is required'], 400);
         }
 
-        // 1) Pokupi korisnike koji ispunjavaju kriterijume
+        // 1) Pokupi korisnike koji ispunjavaju uslove
         $userQuery = User::query();
-
         if (!empty($countries)) {
             $userQuery->whereIn('country_id', $countries);
         }
-
         if (!empty($genders)) {
             $userQuery->whereIn('gender', $genders);
         }
-
         $userIds = $userQuery->pluck('user_id');
-        $eligibleUserCount = $userIds->count();
-
-        if ($eligibleUserCount === 0) {
+        if ($userIds->isEmpty()) {
             return response()->json(['message' => 'No users match the given filters'], 404);
         }
 
-        // 2) Pokupi cinjenice za koje su glasali da su istiniti
+        // 2) Pokupi sve činjenice koje pripadaju temi i imaju glasove od tih korisnika
         $facts = Fact::where('topic_id', $topicId)
             ->with(['factVotes' => function ($query) use ($userIds) {
-                $query->whereIn('user_id', $userIds)
-                    ->where('rating', true);
+                $query->whereIn('user_id', $userIds);
             }])
             ->get();
 
-        // 3) Filtriraj samo cinjenice koje vecina korisniak podrzava
-        $filtered = $facts->filter(function ($fact) use ($eligibleUserCount) {
-            return $fact->factVotes->count() > ($eligibleUserCount / 2);
+        // 3) Filtriraj činjenice za koje su ovi korisnici glasali
+        $filtered = $facts->filter(function ($fact) use ($userIds) {
+            $votes = $fact->factVotes;
+            $totalVotes = $votes->count();
+            $trueVotes = $votes->where('rating', true)->count();
+
+            info("Fact ID {$fact->fact_id} - Total Votes: $totalVotes, True Votes: $trueVotes");
+
+            return $totalVotes > 0 && ($trueVotes / $totalVotes) > 0.5; 
         });
 
         if ($filtered->isEmpty()) {
             return response()->json(['message' => 'No facts met the voting threshold'], 404);
-        }
-
-        $texts = $filtered->pluck('text')->values();
-
-        return response()->json(['facts' => $texts], 200);
     }
+
+    $texts = $filtered->pluck('text')->values();
+
+    return response()->json(['facts' => $texts], 200);
+}
+
 
 
 }
