@@ -43,6 +43,8 @@ class AuthController extends Controller
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
+        $user->load('country');
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json(['message' => 'User logged in successfully', 'user' => $user, 'token' => $token], 200);

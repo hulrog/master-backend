@@ -9,7 +9,7 @@ class UserController extends Controller
 {
     public function getAllUsers()
     {
-        $users = User::all();
+        $users = User::with('country')->get();
         if ($users->isEmpty()) {
             return response()->json(['message' => 'No users found'], 404);
         }
