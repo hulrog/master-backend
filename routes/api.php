@@ -18,13 +18,12 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
+// Country routes
+Route::get('/getAllCountries', [CountryController::class, 'getAllCountries']);
 
 Route::middleware('auth:sanctum')->group(function () {
     
-    // Country routes
-    Route::get('/getAllCountries', [CountryController::class, 'getAllCountries']);
-
-
+    // User routes
     Route::get('/getAllUsers', [UserController::class, 'getAllUsers']);
     Route::post('/createUser', [UserController::class, 'createUser']);
     Route::delete('/deleteUser/{id}', [UserController::class, 'deleteUser']);
