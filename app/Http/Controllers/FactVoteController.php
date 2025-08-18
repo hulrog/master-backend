@@ -23,6 +23,12 @@ class FactVoteController extends Controller
             'user_id' => 'required|integer',
             'rating' => 'required|boolean',
         ]);
+
+         // Delete any previous vote for this fact by this user
+        FactVote::where('fact_id', $validatedData['fact_id'])
+            ->where('user_id', $validatedData['user_id'])
+            ->delete();
+            
         $factVote = FactVote::create($validatedData);
         return response()->json(['message' => 'Fact vote created successfully', 'fact_vote' => $factVote], 201);
     }

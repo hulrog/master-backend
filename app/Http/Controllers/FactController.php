@@ -30,6 +30,44 @@ class FactController extends Controller
         return response()->json(['message' => 'Facts retrieved successfully', 'facts' => $formattedFacts], 200);
     }
 
+    public function getInterestingFacts(Request $request)
+    {
+        $user = $request->user(); 
+
+        $facts = Fact::with(['user', 'topic', 'factVotes'])->get();
+        
+        if ($facts->isEmpty()) {
+            return response()->json(['message' => 'No facts found'], 404);
+        }
+
+        $formattedFacts = $facts->map(function ($fact) use ($user) {
+            $userVote = null;
+            if ($user) {
+                $vote = $fact->factVotes->firstWhere('user_id', $user->user_id);
+                $userVote = $vote->rating ?? null;
+            }
+
+            // Count the ratings
+            $trueRatings = $fact->factVotes->where('rating', true)->count();
+            $falseRatings= $fact->factVotes->where('rating', false)->count();
+
+            return [
+                'fact_id'    => $fact->fact_id,
+                'text'       => $fact->text,
+                'date_entered' => $fact->date_entered,
+                'source'     => $fact->source,
+                'user_id'    => $fact->user_id,
+                'user_name'  => $fact->user->name ?? null,
+                'topic_id'   => $fact->topic_id,
+                'topic_name' => $fact->topic->name ?? null,
+                'user_rating'  => $userVote,
+                'true_ratings' => $trueRatings,
+                'false_ratings' => $falseRatings
+            ];
+        });
+        return response()->json(['message' => 'Facts retrieved successfully', 'facts' => $formattedFacts], 200);
+    }
+
     public function createFact(Request $request)
     {
         $validatedData = $request->validate([
