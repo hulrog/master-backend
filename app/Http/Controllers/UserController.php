@@ -54,6 +54,7 @@ class UserController extends Controller
             'country_id' => 'integer|exists:countries,country_id',
         ]);
         $user->update($validatedData);
+        $user->load('country'); // Da bi vratio sa drzavom
         return response()->json(['message' => 'User updated successfully', 'user' => $user], 200);
     }
 
