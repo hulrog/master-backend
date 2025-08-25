@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Fact;
 use App\Models\User;
+use App\Models\Topic;
+use App\Models\Area;
 use Illuminate\Http\Request;
 
 class FactController extends Controller
@@ -71,14 +73,44 @@ class FactController extends Controller
     public function createFact(Request $request)
     {
         $validatedData = $request->validate([
-            'text' => 'required|string|max:255',
-            'source' => 'required|string|max:255',
-            'user_id' => 'required|integer',
-            'topic_id' => 'required|integer',
+            'text'              => 'required|string|max:255',
+            'source'            => 'required|string|max:255',
+            'user_id'           => 'required|integer',
+            'topic_id'          => 'nullable|integer', // nullable if new topic
+            'area_id'           => 'nullable|integer', // nullable if new area
+            'new_area_name'     => 'nullable|string|max:255', // only if creating new area
+            'new_topic_name'    => 'nullable|string|max:255', // only if creating new topic
         ]);
+
         $validatedData['date_entered'] = now();
+
+        // Create new area if user typed one
+        $newAreaName = $validatedData['new_area_name'] ?? null;
+        if ($newAreaName) {
+            $area = Area::create(['name' => $newAreaName]);
+            $validatedData['area_id'] = $area->area_id;
+        }
+
+        // Create new topic if user typed one
+        $newTopicName = $validatedData['new_topic_name'] ?? null;
+        if ($newTopicName) {
+            $topic = Topic::create([
+                'name' => $newTopicName,
+                'area_id' => $validatedData['area_id'],
+            ]);
+            $validatedData['topic_id'] = $topic->topic_id;
+        }
+
+        $validatedData['area_id'] = null;
+        $validatedData['new_area_name'] = null;
+        $validatedData['new_topic_name'] = null;
+
         $fact = Fact::create($validatedData);
-        return response()->json(['message' => 'Fact created successfully', 'fact' => $fact], 201);
+
+        return response()->json([
+            'message' => 'Fact created successfully',
+            'fact' => $fact
+        ], 201);
     }
 
     public function getAllFactsOfUser($userId)

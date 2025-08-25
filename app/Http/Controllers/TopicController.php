@@ -10,7 +10,7 @@ class TopicController extends Controller
 {
     public function getAllTopics()
     {
-        $topics = Topic::all();
+        $topics = Topic::with('area')->get();
         if ($topics->isEmpty()) {
             return response()->json(['message' => 'No topics found'], 404);
         }
@@ -39,7 +39,7 @@ class TopicController extends Controller
 
     public function getAllTopicsContainingLetters($letters)
     {
-        $topics = Topic::where('name', 'like', "%$letters%")
+        $topics = Topic::with('area')->where('name', 'like', "%$letters%")
             ->get();
         if ($topics->isEmpty()) {
             return response()->json(['message' => 'No topics found containing the given letters'], 404);
