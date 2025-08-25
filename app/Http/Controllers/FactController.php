@@ -49,9 +49,36 @@ class FactController extends Controller
                 $userVote = $vote->rating ?? null;
             }
 
-            // Count the ratings
+            // Broj true i false glasova
             $trueRatings = $fact->factVotes->where('rating', true)->sum('weight');
             $falseRatings= $fact->factVotes->where('rating', false)->sum('weight');
+
+            // Top drzave za true i false
+            $trueCountry = $fact->factVotes
+            ->where('rating', true)
+                ->groupBy('user.country_id')
+                ->map(function ($votes) {
+                    $country = optional($votes->first()->user->country);
+                    return [
+                        'code' => $country->code ?? null,
+                        'weight' => $votes->sum('weight'),
+                    ];
+                })
+                ->sortByDesc('weight')
+                ->first();
+
+             $falseCountry = $fact->factVotes
+                ->where('rating', false)
+                ->groupBy('user.country_id')
+                ->map(function ($votes) {
+                    $country = optional($votes->first()->user->country);
+                    return [
+                        'code' => $country->code ?? null,
+                        'weight' => $votes->sum('weight'),
+                    ];
+                })
+                ->sortByDesc('weight')
+                ->first();
 
             return [
                 'fact_id'    => $fact->fact_id,
@@ -64,7 +91,9 @@ class FactController extends Controller
                 'topic_name' => $fact->topic->name ?? null,
                 'user_rating'  => $userVote,
                 'true_ratings' => $trueRatings,
-                'false_ratings' => $falseRatings
+                'false_ratings' => $falseRatings,
+                'true_country'  => $trueCountry['code'] ?? null,
+                'false_country' => $falseCountry['code'] ?? null,
             ];
         });
         return response()->json(['message' => 'Facts retrieved successfully', 'facts' => $formattedFacts], 200);

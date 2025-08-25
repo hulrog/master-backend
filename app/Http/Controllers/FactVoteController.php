@@ -45,9 +45,36 @@ class FactVoteController extends Controller
             'weight'  => $weight,
         ]);
 
+        // === Kalkukacija top drzava ===
+        $votes = FactVote::with('user.country')
+            ->where('fact_id', $validatedData['fact_id'])
+            ->get();
+
+        $trueCountries = $votes->where('rating', true)
+            ->groupBy('user.country_id')
+            ->map->count()
+            ->sortDesc();
+
+        $falseCountries = $votes->where('rating', false)
+            ->groupBy('user.country_id')
+            ->map->count()
+            ->sortDesc();
+
+        // ID-jevi top drzava
+        $topTrueId = $trueCountries->keys()->first();
+        $topFalseId = $falseCountries->keys()->first();
+
+        // Resolve codes (safe with optional)
+        $topTrueCountry  = optional($votes->firstWhere('user.country_id', $topTrueId)?->user?->country)->code;
+        $topFalseCountry = optional($votes->firstWhere('user.country_id', $topFalseId)?->user?->country)->code;
+
         return response()->json([
             'message' => 'Fact vote created successfully',
-            'fact_vote' => $factVote
+            'fact_vote' => $factVote,
+            'top_countries' => [
+                'true' => $topTrueCountry,
+                'false' => $topFalseCountry,
+            ]
         ], 201);
     }
 
