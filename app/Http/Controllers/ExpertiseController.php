@@ -36,19 +36,28 @@ class ExpertiseController extends Controller
         return response()->json(['message' => 'Expertise deleted successfully'], 200);
     }
 
-    public function getAllExpertisesOfUser($userId)
+    public function getAllExpertisesOfUser(Request $request, $userId)
     {
+        $currentUserId = $request->user()->user_id;
+
         $expertises = Expertise::where('user_id', $userId)
             ->with('area')
             ->withSum('ratings as total_rating', 'rating')
+            ->with(['ratings' => function ($query) use ($currentUserId) {
+                $query->where('user_id', $currentUserId);
+            }])
             ->get()
             ->map(function ($expertise) {
+                $existingRating = $expertise->ratings->first();
+
                 return [
                     'expertise_id' => $expertise->expertise_id,
-                    'name' => $expertise->area->name ?? 'Unknown',
-                    'total_rating' => $expertise->total_rating ?? 0,
+                    'area_id'      => $expertise->area->area_id ?? null,
+                    'name'         => $expertise->area->name ?? 'Unknown',
+                    'total_rating' => (int) ($expertise->total_rating ?? 0),
+                    'user_rating'  => $existingRating ? (int) $existingRating->rating : null,
                 ];
-        });
+            });
 
         if ($expertises->isEmpty()) {
             return response()->json(['message' => 'No expertises found for this user'], 404);
@@ -56,4 +65,5 @@ class ExpertiseController extends Controller
 
         return response()->json(['expertises' => $expertises], 200);
     }
+
 }

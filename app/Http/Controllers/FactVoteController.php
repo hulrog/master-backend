@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Fact;
+use App\Models\Expertise;
 use App\Models\FactVote;
 use Illuminate\Http\Request;
 
@@ -21,15 +23,33 @@ class FactVoteController extends Controller
         $validatedData = $request->validate([
             'fact_id' => 'required|integer',
             'user_id' => 'required|integer',
-            'rating' => 'required|boolean',
+            'rating'  => 'required|boolean',
         ]);
 
-         // Delete any previous vote for this fact by this user
+        $fact = Fact::with('topic')->findOrFail($validatedData['fact_id']);
+
+        $expertise = Expertise::where('user_id', $validatedData['user_id'])
+            ->where('area_id', $fact->topic->area_id)
+            ->withSum('ratings', 'rating')
+            ->first();
+        $weight = $expertise ? (int) ($expertise->ratings_sum_rating  ?? 1) : 1;
+
         FactVote::where('fact_id', $validatedData['fact_id'])
             ->where('user_id', $validatedData['user_id'])
             ->delete();
-            
-        $factVote = FactVote::create($validatedData);
-        return response()->json(['message' => 'Fact vote created successfully', 'fact_vote' => $factVote], 201);
+
+        $factVote = FactVote::create([
+            'fact_id' => $validatedData['fact_id'],
+            'user_id' => $validatedData['user_id'],
+            'rating'  => $validatedData['rating'],
+            'weight'  => $weight,
+        ]);
+
+        return response()->json([
+            'message' => 'Fact vote created successfully',
+            'fact_vote' => $factVote
+        ], 201);
     }
+
+
 }

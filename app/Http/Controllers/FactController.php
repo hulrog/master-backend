@@ -48,8 +48,8 @@ class FactController extends Controller
             }
 
             // Count the ratings
-            $trueRatings = $fact->factVotes->where('rating', true)->count();
-            $falseRatings= $fact->factVotes->where('rating', false)->count();
+            $trueRatings = $fact->factVotes->where('rating', true)->sum('weight');
+            $falseRatings= $fact->factVotes->where('rating', false)->sum('weight');
 
             return [
                 'fact_id'    => $fact->fact_id,

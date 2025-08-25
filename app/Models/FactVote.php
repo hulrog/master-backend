@@ -23,6 +23,7 @@ class FactVote extends Model
         'fact_id',
         'user_id',
         'rating',
+        'weight',
     ];
 
     public $timestamps = false; 
