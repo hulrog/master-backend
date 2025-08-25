@@ -51,22 +51,17 @@ class FactVoteController extends Controller
             ->get();
 
         $trueCountries = $votes->where('rating', true)
-            ->groupBy('user.country_id')
+            ->groupBy(fn ($vote) => $vote->user->country?->code)
             ->map->count()
             ->sortDesc();
 
         $falseCountries = $votes->where('rating', false)
-            ->groupBy('user.country_id')
+            ->groupBy(fn ($vote) => $vote->user->country?->code)
             ->map->count()
             ->sortDesc();
 
-        // ID-jevi top drzava
-        $topTrueId = $trueCountries->keys()->first();
-        $topFalseId = $falseCountries->keys()->first();
-
-        // Resolve codes (safe with optional)
-        $topTrueCountry  = optional($votes->firstWhere('user.country_id', $topTrueId)?->user?->country)->code;
-        $topFalseCountry = optional($votes->firstWhere('user.country_id', $topFalseId)?->user?->country)->code;
+        $topTrueCountry  = $trueCountries->keys()->first();
+        $topFalseCountry = $falseCountries->keys()->first();
 
         return response()->json([
             'message' => 'Fact vote created successfully',
