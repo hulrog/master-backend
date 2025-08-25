@@ -234,12 +234,65 @@ class FactController extends Controller
 
         if ($filtered->isEmpty()) {
             return response()->json(['message' => 'No facts met the voting threshold'], 404);
+        }
+
+        $texts = $filtered->pluck('text')->values();
+
+        return response()->json(['facts' => $texts], 200);
     }
 
-    $texts = $filtered->pluck('text')->values();
+    public function getFactDetails($factId)
+    {
+        $fact = Fact::with(['user', 'topic', 'factVotes.user.country'])->find($factId);
 
-    return response()->json(['facts' => $texts], 200);
-}
+        if (!$fact) {
+            return response()->json(['message' => 'Fact not found'], 404);
+        }
+
+        // Count weighted true/false ratings
+        $trueRatings = $fact->factVotes->where('rating', true)->sum('weight');
+        $falseRatings = $fact->factVotes->where('rating', false)->sum('weight');
+
+        // Breakdown by countries
+        $trueCountries = $fact->factVotes
+            ->where('rating', true)
+            ->groupBy(fn($vote) => $vote->user->country?->code)
+            ->map(fn($votes) => [
+                'code' => optional($votes->first()->user->country)->code,
+                'weight' => $votes->sum('weight'),
+            ])
+            ->values();
+
+        $falseCountries = $fact->factVotes
+            ->where('rating', false)
+            ->groupBy(fn($vote) => $vote->user->country?->code)
+            ->map(fn($votes) => [
+                'code' => optional($votes->first()->user->country)->code,
+                'weight' => $votes->sum('weight'),
+            ])
+            ->values();
+
+        $data = [
+            'fact_id' => $fact->fact_id,
+            'text' => $fact->text,
+            'source' => $fact->source,
+            'date_entered' => $fact->date_entered,
+            'topic_id' => $fact->topic_id,
+            'topic_name' => $fact->topic->name ?? null,
+            'user_id' => $fact->user_id,
+            'user_name' => $fact->user->name ?? null, // fact submitter
+            'true_ratings' => $trueRatings,
+            'false_ratings' => $falseRatings,
+            'true_countries' => $trueCountries,
+            'false_countries' => $falseCountries,
+        ];
+
+        return response()->json([
+            'message' => 'Fact details retrieved successfully',
+            'fact' => $data,
+        ], 200);
+    }   
+
 
 
 

@@ -47,6 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/getAllFactsOfUser/{userId}', [FactController::class, 'getAllFactsOfUser']);
     Route::get('/getAllFactsOfTopic/{topicId}', [FactController::class, 'getAllFactsOfTopic']);
     Route::post('/getAllFactsThatMeetRequirements', [FactController::class, 'getAllFactsThatMeetRequirementsv2']);
+    Route::get('/getFactDetails/{id}', [FactController::class, 'getFactDetails']);
 
     // FactVote routes
     Route::get('/getAllFactVotesOfFact/{factId}', [FactVoteController::class, 'getAllFactVotesOfFact']);
