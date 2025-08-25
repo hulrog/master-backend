@@ -193,12 +193,12 @@ class FactController extends Controller
 
     public function getAllFactsThatMeetRequirementsv2(Request $request)
     {
-        $topicId = $request->input('topicId');
+        $topicId = $request->input('topic_id');
         $countries = $request->input('countries', []);
-        $genders = $request->input('gender', []);
+        $genders = $request->input('genders', []);
 
         if (!$topicId) {
-            return response()->json(['error' => 'topicId is required'], 400);
+            return response()->json(['error' => 'topic_id is required'], 400);
         }
 
         // 1) Pokupi korisnike koji ispunjavaju uslove
